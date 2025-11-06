@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Local Gallery</title>
+<style>
+
+  :root{
+    --gap:12px;
+    --card-bg:#fff;
+    --muted:#666;
+    --accent:#0b84ff;
+    --bg:#0b0b0b;
+    --text:white;
+   --dark-charcoal: #111111;
+  --dark-jet: #1A1A1A;
+  --dark-raisin: #1E1E1E;
+  --dark-eerie: #1B1B1B;
+  --dark-onyx: #0F0F0F;
+  --dark-gunmetal: #121212;
+  --dark-outerspace: #2B2B2B;
+
+  --text-light: #eee; /* for contrast on dark backgrounds */ 
+  }
+
+  body{
+    margin:0;
+    font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:#FFFFF6;
+    color:var(--text);
+    padding:20px;
+  }
+
+
+.gallery{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+  /*.container{
+    max-width:1280px;
+    margin:0 auto;
+  }
+*/
+
+
+  
+
+  h1{ margin:0 0 16px; font-size:1.25rem; }
+  /* Responsive breakpoints */
+  @media (max-width:1200px){ .grid{ grid-template-columns: repeat(4, 1fr); } } /* 4 cols */
+  @media (max-width:900px){  .grid{ grid-template-columns: repeat(3, 1fr); } } /* 3 cols */
+  @media (max-width:600px){  .grid{ grid-template-columns: repeat(2, 1fr); } } /* 2 cols */
+  @media (max-width:420px){  .grid{ grid-template-columns: 1fr; } }              /* 1 col */
+
+  .media-card{
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+    display:flex;
+    flex-direction:column;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+
+  .thumb-wrap{
+    width:100%;
+    aspect-ratio: 16/9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    border:1px solid white;
+
+  }
+
+  .thumb-wrap img, .thumb-wrap video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* .caption{
+    padding:9px 10px;
+    background:var(--dark-gunmetal);
+    font-size:0.88rem;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    border:1px solid white;
+  }  */
+
+
+  .modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.2s ease;
+}
+.modal.show {
+  visibility: visible;
+  opacity: 1;
+}
+.modal img {
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 50%;
+  user-select: none;
+}
+
+.nav.left { left: 30px; }
+.nav.right { right: 30px; }
+
+.nav:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+.info {
+  text-align: center;
+  margin: 3rem auto;
+  max-width: 600px;
+    color: black;
+}
+
+.info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.info p {
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.socials a {
+  color: #222;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.socials a:hover {
+  color: #0073b1; /* highlight on hover */
+}
+
+.socials svg {
+  width: 20px;
+  height: 20px;
+}
+
+</style>
+</head>
+<body>
+
+    <section class="info">
+      <h2>>_< rsvn's captures </h2>
+  <p> more often i like to capture the moments</p>
+  
+  <div class="socials">
+    <a href="https://linkedin.com/in/rsvn" target="_blank" aria-label="LinkedIn">
+      <!-- LinkedIn SVG -->
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.02 8.98h4.93V24H.02zM8.98 8.98h4.73v2.05h.07c.66-1.25 2.29-2.55 4.72-2.55C22.42 8.48 24 10.35 24 14.23V24h-4.93v-8.77c0-2.09-.04-4.78-2.91-4.78-2.91 0-3.36 2.27-3.36 4.63V24H8.98z"/>
+      </svg>
+    </a>
+
+    <a href="https://github.com/risvn" target="_blank" aria-label="GitHub">
+      <!-- GitHub SVG -->
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 .3A12 12 0 0 0 0 12.5a12 12 0 0 0 8.2 11.5c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6a3.1 3.1 0 0 0-1.3-1.7c-1-.7.1-.7.1-.7a2.5 2.5 0 0 1 1.8 1.3 2.6 2.6 0 0 0 3.5 1 2.6 2.6 0 0 1 .8-1.6c-2.7-.3-5.5-1.3-5.5-5.8A4.5 4.5 0 0 1 6 8.6a4.1 4.1 0 0 1 .1-3s1-.3 3.3 1.2a11.3 11.3 0 0 1 6 0C17.7 5.5 18.7 5.8 18.7 5.8a4.1 4.1 0 0 1 .1 3 4.5 4.5 0 0 1 1.2 3.1c0 4.5-2.8 5.5-5.5 5.8a2.9 2.9 0 0 1 .8 2.3v3.3c0 .3.2.7.8.6A12 12 0 0 0 24 12.5 12 12 0 0 0 12 .3z"/>
+      </svg>
+    </a>
+
+    <a href="https://risvn.github.io/blog/" target="_blank" aria-label="Blog">
+      <!-- Blog (RSS) SVG -->
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6.18 17.82a2.18 2.18 0 1 1-4.36 0 2.18 2.18 0 0 1 4.36 0zM1.82 9v3.27A9.91 9.91 0 0 1 12 22.36h3.27A13.18 13.18 0 0 0 1.82 9zm0-6v3.27A16.18 16.18 0 0 1 18.73 22.36H22A19.45 19.45 0 0 0 1.82 3z"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+
+  <div class="gallery",id="gallery">
+    </div>
+
+
+
+    <div id="modal" class="modal">
+  <button class="nav left">&#10094;</button>   <!-- ‹ -->
+  <img id="modalImg" alt="">
+  <button class="nav right">&#10095;</button>  <!-- › -->
+</div>
+
+<footer style="text-align:center; font-size:0.9rem; color:#777; margin-top:2rem; padding:1rem 0; border-top:1px solid #ddd;">
+  © RSVN — Powered by 
+  <img src="assets/clogo.png" alt="C Logo" style="height:1em; vertical-align:middle;">
+  , Hosted on 
+  <img src="assets/linux.png" alt="Linux Logo" style="height:1.8em; vertical-align:middle;">
+</footer>
+
+
+<script>
+
+//TODO(rsvn):write the string maninpulation function to get the path
+
+
+const input = `
+media__050.jpg
+media__049.jpg
+media__048.jpg
+media__047.jpg
+media__046.jpg
+media__045.jpg
+media__044.jpg
+media__043.jpg
+media__042.jpg
+media__041.jpg
+media__040.jpg
+media__039.jpg
+media__038.jpg
+media__037.jpg
+media__036.jpg
+media__035.jpg
+media__034.jpg
+media__033.jpg
+media__032.jpg
+media__031.jpg
+media__030.jpg
+media__029.jpg
+media__028.jpg
+media__027.jpg
+media__026.jpg
+media__025.jpg
+media__024.jpg
+media__023.jpg
+media__022.jpg
+media__021.jpg
+media__020.jpg
+media__019.jpg
+media__018.jpg
+media__017.jpg
+media__016.jpg
+media__015.jpg
+media__014.jpg
+media__013.jpg
+media__012.jpg
+media__011.jpg
+media__010.jpg
+media__009.jpg
+media__008.jpg
+media__007.jpg
+media__006.jpg
+media__005.jpg
+media__004.jpg
+media__003.jpg
+media__002.jpg
+media__001.jpg
+`;
+
+
+const inputjson=input.trim().split("\n").map(f=>f.trim())
+const posts = inputjson.map(name=>({name}))   
+   
+    
+// Function to create a media card (image/video) with caption
+function createCard(post) {
+    const mediaPath = `media/${post.name}`;
+    const gallery = document.getElementsByClassName('gallery')[0];
+
+    // Create card container
+    const mediaCard = document.createElement('div');
+    mediaCard.className = 'card';
+    mediaCard.id = post.name;
+
+    // Create thumbnail wrapper
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'thumb-wrap';
+
+    // Add media (video or image)
+    if (/\.(mp4|webm|mov)$/i.test(mediaPath)) {
+        const video = document.createElement('video');
+        video.src = mediaPath;
+        video.controls = true;
+        video.className = 'thumb';
+        video.preload = 'metadata';
+        thumbWrap.appendChild(video);
+    } else {
+        const img = document.createElement('img');
+        img.src = mediaPath;
+        img.className = 'thumb';
+        img.loading = 'lazy';
+        thumbWrap.appendChild(img);
+    }
+
+    mediaCard.appendChild(thumbWrap);
+
+    // Recursively create cards for attachments
+    if (Array.isArray(post.attachments) && post.attachments.length > 0) {
+        post.attachments.forEach(a => {
+            createCard({
+                file: { name: a.name },
+                title: "attachment",
+                published: post.published,
+                attachments: [] // prevent nested attachments
+            });
+        });
+    }
+
+    // Create caption
+    const caption = document.createElement('div');
+    caption.className = 'caption';
+
+    const textPar = document.createElement('p');
+    textPar.textContent = post.title;
+
+    const date = document.createElement('small');
+    date.textContent = post.published;
+
+    caption.appendChild(textPar);
+    caption.appendChild(date);
+    mediaCard.appendChild(caption);
+
+    // Append card to gallery
+    gallery.appendChild(mediaCard);
+}
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.card');
+  const modal = document.getElementById('modal');
+  const modalImg = document.getElementById('modalImg');
+  const leftBtn = document.querySelector('.nav.left');
+  const rightBtn = document.querySelector('.nav.right');
+
+  let currentIndex = -1; // track which image is open
+
+  // Helper to show image by index
+  function showImage(index) {
+    if (index < 0) index = cards.length - 1;
+    if (index >= cards.length) index = 0;
+    currentIndex = index;
+    const card = cards[index];
+    const img = cards[index].querySelector('img');
+    const full = img.dataset.full || img.src;
+    modalImg.src = full;
+
+   modal.classList.add('show');
+  }
+
+  // Open modal on click
+  cards.forEach((card, i) => {
+
+
+    card.addEventListener('click', () => showImage(i));
+  });
+
+  // Navigation
+  leftBtn.addEventListener('click', e => {
+    e.stopPropagation(); // prevent modal close
+    showImage(currentIndex - 1);
+  });
+
+  rightBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    showImage(currentIndex + 1);
+  });
+
+  // Close modal when background clicked
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('show');
+  });
+
+  // Keyboard controls
+  document.addEventListener('keydown', e => {
+    if (!modal.classList.contains('show')) return;
+    if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+    if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+    if (e.key === 'Escape') modal.classList.remove('show');
+  });
+});
+
+
+
+
+
+// Render all posts
+posts.forEach(post => {
+    createCard(post);
+});
+
+
+
+</script>
+</body>
+</html>
+
