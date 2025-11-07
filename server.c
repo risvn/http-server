@@ -1,7 +1,6 @@
-//  server.c
 #include<sys/socket.h>
 #include<strings.h>
-#include <netdb.h>       // <-- defines struct addrinfo, getaddrinfo(), AI_PASSIVE, etc.
+#include <netdb.h>
 #include <arpa/inet.h>  
 #include <netinet/in.h>
 #include <stdio.h>
@@ -33,6 +32,7 @@ void* get_addr_info(struct sockaddr* sa)
   }
 }
 
+
 char* get_mime_type(char* path)
 {
   char* ext = strrchr(path,'.');
@@ -44,10 +44,16 @@ char* get_mime_type(char* path)
 
 char* req_parser(char* buffer)
 {
-  char* client_req=buffer+5;
+  char* client_req=buffer+4;
   *strchr(client_req,' ')=0;
-  return client_req;
 
+  // if the request path is root "/" send the index.html file
+  if (strcmp(client_req, "/") == 0 ) {
+    return client_req = "index.html";
+} else {
+    if (client_req[0] == '/') client_req++;
+          return client_req;
+    }
 }
 
 
@@ -57,7 +63,7 @@ int send_file(int client_fd,char* req_file)
   int open_fd=open(req_file,O_RDONLY);
   // TODO: replace the print with http status code replaying to the client
   if(open_fd<0){
-    printf("file not find\n");
+    printf("file not found\n");
 
     const char* not_found = "HTTP/1.1 404 Not Found\r\n"
                                 "Content-Type: text/html\r\n"
@@ -87,14 +93,16 @@ int send_file(int client_fd,char* req_file)
              "Connection: close\r\n\r\n",
              mime, st.st_size);
 
-   // send header
+   // send header to the browser
   send(client_fd, header, strlen(header), 0);
   int status = sendfile(client_fd,open_fd,0,st.st_size);
   
       if(status<0){printf("server failed! to send file\n");}
       else{printf("file sent successfully!\n");}
-  close(open_fd);
-  close(client_fd);
+
+    close(open_fd);   
+    close(client_fd);  
+
 
 
 return 0;
@@ -141,7 +149,7 @@ printf(" Server running on port %s\n", PORT);
 while(1)
   {
 
-  //TODO:make sure it handles more than one client at once
+  //TODO: make the process async and multi-thread to handle clients 
 
   addr_size=sizeof(their_addr);
     //accept(fd,sockadddr,addr_size)
@@ -159,14 +167,16 @@ while(1)
     
 
     
-            //recv GET req
+    //TODO:only accept only GET requestes
     char buff[1024];
     memset(buff,0,sizeof buff);
     int bytes_recv=recv(client_fd,buff,sizeof(buff)-1,0);
       printf("bytes recvd: %d\n",bytes_recv);
-      printf("client req:%s\n",buff);
+      printf("client request >>:%s\n",buff);
      char* client_req = req_parser(buff);
-      printf("req:%s\n",client_req);
+      printf("requsest>>:%s\n",client_req);
+
+
       send_file(client_fd,client_req);
 
   }
