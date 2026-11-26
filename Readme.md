@@ -1,4 +1,4 @@
-# C HTTP Server
+# HTTP Server in C
 
 A lightweight HTTP server written from scratch in C using Linux/POSIX system calls and the Berkeley socket API.
 
